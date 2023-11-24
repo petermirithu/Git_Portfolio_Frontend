@@ -43,7 +43,7 @@ const Sidebar = () => {
         <TextField
           label="Full Name"
           value={userData.fullName}
-          fullWidth
+          fullWidths
           variant="outlined"
           disabled={!isEditing}
           onChange={(e) => handleInputChange('fullName', e.target.value)}

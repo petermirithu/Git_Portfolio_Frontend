@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Tabs from './tabs';
+import Sidebar from '../../Components/Sidebar';
 import { checkIfLoggedIn } from '../../services/GlobalService';
 import { CircularProgress } from '@mui/material';
 
@@ -39,9 +40,11 @@ export default function Home() {
     }
 
    return (
-       <>
+    <>
+    <Sidebar/>
+
        <Tabs/>
-       </>
+    </> 
    );
 }
 

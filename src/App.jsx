@@ -4,6 +4,8 @@ import Home from "./pages/home/Home";
 import SignIn from "./pages/signIn/SignIn";
 import SignUp from "./pages/signUp/SignUp";
 import * as React from 'react';
+import ForgotPassword from "./pages/forgotPassword/ForgotPassword";
+import ResetPassword from "./pages/resetPassword/ResetPassword";
 
 
 function App() {  
@@ -14,6 +16,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="signIn" element={<SignIn />} />
           <Route path="signUp" element={<SignUp />} />
+          <Route path="forgotPassword" element={<ForgotPassword />} />          
+          <Route path="resetPassword" element={<ResetPassword />} />          
         </Route>
       </Routes>
     </BrowserRouter>

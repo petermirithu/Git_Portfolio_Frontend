@@ -19,3 +19,11 @@ export const sign_up_user = (payload) => {
 export const sign_in_user = (payload) => {    
     return Axios.post(BACKEND_BASE_URL + "/api/sign_in_user", payload);
 }
+
+export const forgot_password = (payload) => {    
+    return Axios.put(BACKEND_BASE_URL + "/api/forgot_password", payload);
+}
+
+export const reset_password = (payload) => {    
+    return Axios.put(BACKEND_BASE_URL + "/api/reset_password", payload);
+}

@@ -3,9 +3,10 @@ import Tabs from './tabs';
 import Sidebar from '../../Components/Sidebar';
 import { checkIfLoggedIn } from '../../services/GlobalService';
 import { CircularProgress } from '@mui/material';
+import Navbar from '../../Components/navbar';
 
 export default function Home() {
-    const [isLoading, setIsLoading] = React.useState(null);
+    const [isLoading, setIsLoading] = React.useState(false);
     
     const authGuard = async () => {                
         await checkIfLoggedIn().then(response => {
@@ -41,9 +42,9 @@ export default function Home() {
 
    return (
     <>
-    <Sidebar/>
-
-       <Tabs/>
+       <Navbar/>
+       <Sidebar/>
+       <Tabs/> 
     </> 
    );
 }

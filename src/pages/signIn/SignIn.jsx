@@ -9,13 +9,21 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress, LinearProgress } from '@mui/material';
+import { sign_in_user, validateEmail } from '../../services/UserService';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserProfile } from '../../redux/UserProfileSlice';
+import { checkIfLoggedIn } from '../../services/GlobalService';
 
 
 
 export default function SignIn() {
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [isRequesting, setIsRequesting] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(null);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    const dispatch = useDispatch();
+    const { profile } = useSelector((state) => state.userProfile);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -28,24 +36,67 @@ export default function SignIn() {
             alert("Please enter a valid Password. It must have at least 8 characters.");
         }
         else {
-            setIsRequesting(true);
+            setIsSubmitting(true);
 
-            setTimeout(() => {
-                alert("You have submitted your data");
-            }, 2000);
+            const payload = {
+                email: data.get('email'),
+                password: data.get('password')
+            }
+
+            await sign_in_user(payload).then(result => {
+                localStorage.setItem("auth_token", result?.data?.auth_token);
+                delete result.data.auth_token;
+                localStorage.setItem("user_profile", JSON.stringify(result?.data));
+                dispatch(setUserProfile(result.data));
+                setIsSubmitting(false);
+                window.location.href = "/";
+            }).catch(error => {
+                console.log(error)
+                setIsSubmitting(false);
+                if (error?.response?.data == "invalidCredentials") {
+                    alert("Seems like you provided an incorrect email or password!")
+                }
+                else {
+                    alert("Oops! Something went wrong while authenticating you.")
+                }
+            });
         };
     }
 
+    const authGuard = async () => {        
+        await checkIfLoggedIn().then(response => {
+            setIsLoading(false);
+            if (response == true) {
+                window.location.href = "/";
+            }
+            setIsLoading(false);
+        });
+    }
+
+    React.useEffect(() => {
+        if (isLoading == null) {
+            setIsLoading(true);
+            authGuard();
+        }
+    }, [isLoading, isSubmitting]);
+
+    // if (isLoading != false) {
+    //     return (
+    //         <div style={{
+    //             display: 'flex',
+    //             alignItems: 'center',
+    //             justifyContent: 'center',
+    //             height: '100vh',
+    //             overflow:"hidden"
+    //         }}>
+    //             <CircularProgress />
+    //             <p>Loading ...</p>
+    //         </div>
+    //     )
+    // }
+
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
-            <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={isLoading != false}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-
-
             <CssBaseline />
             <Grid
                 item
@@ -104,7 +155,7 @@ export default function SignIn() {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            {(isRequesting == true) ? "Signing in ..." : "Sign In"}
+                            {(isSubmitting == true) ? "Signing in ..." : "Sign In"}
                         </Button>
                         <Grid container>
                             <Grid item xs>

@@ -10,17 +10,20 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { Backdrop, CircularProgress } from '@mui/material';
+import { sign_up_user, validateEmail } from '../../services/UserService';
+import { useSelector } from 'react-redux';
+import { checkIfLoggedIn } from '../../services/GlobalService';
 
 
 export default function SignUp() {
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(null);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
-
+    
+    const { profile } = useSelector((state) => state.userProfile);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-
 
         if (data.get('firstName')?.length < 3) {
             alert("Please enter a valid first name");
@@ -36,17 +39,46 @@ export default function SignUp() {
         }
         else {
             setIsSubmitting(true);
-            setTimeout(() => {
-                alert("You have submitted your data");
-            }, 2000);
+            const payload = {
+                first_name: data.get('firstName'),
+                last_name: data.get('lastName'),
+                email: data.get('email'),
+                password: data.get('password')                
+            }
 
-
+            await sign_up_user(payload).then(result => {
+                setIsSubmitting(false);
+                alert("Successfully created an account for you.\nNow sign in to verify your account!");
+                window.location.href = "/signIn"
+            }).catch(error => {
+                console.log(error)
+                setIsSubmitting(false);
+                if (error?.response?.data == "emailTaken") {
+                    alert("Oops! Seems like the email you used is already taken")
+                }
+                else {
+                    alert("Oops! Something went wrong while creating your account.")
+                }
+            });
         }
     };
 
+    const authGuard = async () => {        
+        await checkIfLoggedIn().then(response => {
+            setIsLoading(false);
+            if (response == true) {
+                window.location.href = "/";
+            }
+            setIsLoading(false);
+        });
+    }
 
-
-
+    React.useEffect(() => {
+        if (isLoading == null) {
+            setIsLoading(true);
+            authGuard();
+        }
+    }, [isLoading, isSubmitting]);
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>

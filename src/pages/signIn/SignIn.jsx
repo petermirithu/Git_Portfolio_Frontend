@@ -63,9 +63,8 @@ export default function SignIn() {
         };
     }
 
-    const authGuard = async () => {        
+    const authGuard = async () => {
         await checkIfLoggedIn().then(response => {
-            setIsLoading(false);
             if (response == true) {
                 window.location.href = "/";
             }
@@ -80,20 +79,20 @@ export default function SignIn() {
         }
     }, [isLoading, isSubmitting]);
 
-    // if (isLoading != false) {
-    //     return (
-    //         <div style={{
-    //             display: 'flex',
-    //             alignItems: 'center',
-    //             justifyContent: 'center',
-    //             height: '100vh',
-    //             overflow:"hidden"
-    //         }}>
-    //             <CircularProgress />
-    //             <p>Loading ...</p>
-    //         </div>
-    //     )
-    // }
+    if (isLoading != false) {
+        return (
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+                overflow: "hidden"
+            }}>
+                <CircularProgress />
+                <p style={{ marginLeft: 20 }}>Loading ...</p>
+            </div>
+        )
+    }
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
@@ -126,9 +125,9 @@ export default function SignIn() {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        Sign In
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                    <Box component="form" noValidate={false} onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
@@ -159,6 +158,9 @@ export default function SignIn() {
                         </Button>
                         <Grid container>
                             <Grid item xs>
+                                <Link href="/forgotPassword" variant="body2">
+                                    {"Forgot your password?"}
+                                </Link>
                             </Grid>
                             <Grid item>
                                 <Link href="/signUp" variant="body2">

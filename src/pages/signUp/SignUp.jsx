@@ -63,9 +63,8 @@ export default function SignUp() {
         }
     };
 
-    const authGuard = async () => {        
-        await checkIfLoggedIn().then(response => {
-            setIsLoading(false);
+    const authGuard = async () => {                
+        await checkIfLoggedIn().then(response => {            
             if (response == true) {
                 window.location.href = "/";
             }
@@ -79,6 +78,21 @@ export default function SignUp() {
             authGuard();
         }
     }, [isLoading, isSubmitting]);
+
+    if (isLoading != false) {
+        return (
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+                overflow:"hidden"
+            }}>
+                <CircularProgress />                
+                <p style={{marginLeft: 20}}>Loading ...</p>
+            </div>
+        )
+    }
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
@@ -117,9 +131,9 @@ export default function SignUp() {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign up
+                        Sign Up
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate={false} onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField

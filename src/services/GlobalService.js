@@ -16,3 +16,16 @@ export const checkIfLoggedIn = () => {
         }
     })
 }
+
+export const checkIfEmail = () => {
+    return new Promise((resolve, reject) => {
+        const email = localStorage.getItem('email');
+        if (email?.length > 0) {            
+            resolve(email);            
+        }
+        else{
+            resolve(null);
+        }
+    })
+}
+

@@ -41,7 +41,8 @@ export default function Home() {
 
    return (
     <>
-       <Tabs/>
+       <Navbar/>
+       <Tabs/> 
     </> 
    );
 }

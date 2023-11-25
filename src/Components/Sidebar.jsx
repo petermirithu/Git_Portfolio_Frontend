@@ -29,41 +29,51 @@ const Sidebar = () => {
   return (
     <Drawer variant="permanent">
       <Toolbar />
-      <div style={{ width: '200px', height: '100%', backgroundColor: '#f0f0f0', padding: '16px' }}>
-        <Avatar alt="User Avatar" src="/static/images/avatar.jpg" sx={{ width: 200, height: 200 }} />
+      <div style={{ width: '200px', height: '100%', backgroundColor: '#E5E4E2', padding: '16px' }}>
+        <Avatar alt="Image" src="src\assets\pman.jpg" sx={{ width: 200, height: 200 }} />
         <TextField
-          label="Username"
-          value={userData.username}
-          fullWidth
-          variant="outlined"
-          disabled={!isEditing}
-          onChange={(e) => handleInputChange('username', e.target.value)}
-          sx={{ marginTop: 2, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
-        />
+            label="Username"
+            value={userData.username}
+            fullWidth
+            variant="outlined"
+            disabled  // Disable editing for the TextField
+            onChange={(e) => handleInputChange('username', e.target.value)}
+            InputLabelProps={{
+              style: { fontWeight: 'bold', fontSize: '25px' }, // Adjust font weight and size as needed
+            }}
+            sx={{ marginTop: 5, '& .MuiOutlinedInput-notchedOutline': { border: 'none'  } }}
+          />
+
+
         <TextField
-          label="Full Name"
-          value={userData.fullName}
-          fullWidths
-          variant="outlined"
-          disabled={!isEditing}
-          onChange={(e) => handleInputChange('fullName', e.target.value)}
-          sx={{ marginTop: 2, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
-        />
+            label="Full Name"
+            value={userData.fullName}
+            fullWidth
+            variant="outlined"
+            disabled  // Disable editing for the TextField
+            onChange={(e) => handleInputChange('username', e.target.value)}
+            InputLabelProps={{
+              style: { fontWeight: 'bold', fontSize: '25px' }, // Adjust font weight and size as needed
+            }}
+            sx={{ marginTop: 5, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
+          />
+
+
         <TextField
           label="Details"
           multiline
-          rows={4}
+          rows={8}
           value={userData.details}
           fullWidth
           variant="outlined"
-          disabled={!isEditing}
+          disabled
           onChange={(e) => handleInputChange('details', e.target.value)}
-          sx={{ marginTop: 2, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
+          InputLabelProps={{
+            style: { fontWeight: 'bold', fontSize: '25px' }, // Adjust font weight and size as needed
+          }}
+          sx={{ marginTop: 5, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
         />
 
-        <Button variant="outlined" onClick={handleEditClick} sx={{ marginTop: 2 }}>
-          {isEditing ? 'Save' : 'Edit'}
-        </Button>
         {/* Additional details or menu items can be added here */}
       </div>
     </Drawer>

@@ -64,21 +64,17 @@ function Navbar() {
       },
       children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
     };
-  }
-
-  const handlMenuClose = () => {
-    setMenuAnchorEl(null);
-  };
+  }  
 
   const openProfile = () => {
     alert("Profile")
-    handlMenuClose();
+    handleCloseUserMenu();
   }
 
   const logOut = () => {
     localStorage.clear()
-    handlMenuClose();
-    window.location.href = "/";
+    handleCloseUserMenu();
+    window.location.href = "/signIn";
   }
 
   React.useEffect(() => {

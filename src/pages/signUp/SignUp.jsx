@@ -13,6 +13,7 @@ import { Backdrop, CircularProgress } from '@mui/material';
 import { sign_up_user, validateEmail } from '../../services/UserService';
 import { useSelector } from 'react-redux';
 import { checkIfLoggedIn } from '../../services/GlobalService';
+import { fetch_git_hub_user } from '../../services/GitService';
 
 
 export default function SignUp() {
@@ -21,8 +22,9 @@ export default function SignUp() {
     
     const { profile } = useSelector((state) => state.userProfile);
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {        
         event.preventDefault();
+
         const data = new FormData(event.currentTarget);
 
         if (data.get('firstName')?.length < 3) {
@@ -44,22 +46,31 @@ export default function SignUp() {
                 last_name: data.get('lastName'),
                 email: data.get('email'),
                 password: data.get('password')                
-            }
+            }                     
 
-            await sign_up_user(payload).then(result => {
-                setIsSubmitting(false);
-                alert("Successfully created an account for you.\nNow sign in to verify your account!");
-                window.location.href = "/signIn"
-            }).catch(error => {
-                console.log(error)
-                setIsSubmitting(false);
-                if (error?.response?.data == "emailTaken") {
-                    alert("Oops! Seems like the email you used is already taken")
+            await fetch_git_hub_user(payload.email).then(async response=>{                
+                if(response.data.total_count==1){
+                    await sign_up_user(payload).then(result => {
+                        setIsSubmitting(false);
+                        alert("Successfully created an account for you.\nNow sign in to verify your account!");
+                        window.location.href = "/signIn"
+                    }).catch(error => {                        
+                        setIsSubmitting(false);
+                        if (error?.response?.data == "emailTaken") {
+                            alert("Oops! Seems like the email you used is already taken")
+                        }
+                        else {
+                            alert("Oops! Something went wrong while creating your account.")
+                        }
+                    });
                 }
-                else {
-                    alert("Oops! Something went wrong while creating your account.")
-                }
-            });
+                else{
+                    setIsSubmitting(false);
+                    alert("The email you entered is NOT linked to any git hub account!")
+                }                
+            }).catch(error => {                
+                alert("Ooops! Something went wrong while looking you up in Git Hub")
+            });            
         }
     };
 

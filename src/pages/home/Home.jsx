@@ -44,7 +44,7 @@ export default function Home() {
             didMount.current = true
             authGuard();
         }
-    }, []);
+    }, [isLoading]);
 
     if (isLoading != false) {
         return (

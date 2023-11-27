@@ -1,8 +1,10 @@
 import { Octokit } from "octokit";
 import axios from 'axios';
 
+const GIT_PERSONAL_TOKEN = import.meta.env.VITE_GIT_PERSONAL_TOKEN
+
 const octokit = new Octokit({
-    auth: import.meta.env.GIT_PERSONAL_TOKEN
+    auth: GIT_PERSONAL_TOKEN
 });
 
 
@@ -22,3 +24,8 @@ export const fetch_git_hub_user_profile = async (username) => {
     })    
 }
 
+export const fetch_git_hub_user_feed = async (username) => {  
+  return axios.get(`https://api.github.com/users/${username}/events`, {headers: {
+    'Authorization': `Bearer ${GIT_PERSONAL_TOKEN}`
+  }});   
+}

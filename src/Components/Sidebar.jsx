@@ -1,82 +1,87 @@
 import React, { useState } from 'react';
-import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
 import Avatar from '@mui/material/Avatar';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import { useSelector } from 'react-redux';
+import { Typography } from '@mui/material';
+
+import { ApartmentOutlined, LocationOnOutlined, LinkOutlined, EmailOutlined } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState({
-    username: 'john_doe',
-    fullName: 'John Doe',
-    details: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  });
-  
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);
-  };
+  const { gitProfile } = useSelector((state) => state.userProfile);
+  const { profile } = useSelector((state) => state.userProfile);
 
-  const handleInputChange = (field, value) => {
-    setUserData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-  };
-
-  const detailsLength = userData.details.length;
+  console.log(gitProfile)
 
   return (
-    <Drawer variant="permanent">
-      <Toolbar />
-      <div style={{ width: '200px', height: '100%', backgroundColor: '#E5E4E2', padding: '16px' }}>
-        <Avatar alt="Image" src="src\assets\pman.jpg" sx={{ width: 200, height: 200 }} />
-        <TextField
-            label="Username"
-            value={userData.username}
-            fullWidth
-            variant="outlined"
-            disabled  // Disable editing for the TextField
-            onChange={(e) => handleInputChange('username', e.target.value)}
-            InputLabelProps={{
-              style: { fontWeight: 'bold', fontSize: '25px' }, // Adjust font weight and size as needed
-            }}
-            sx={{ marginTop: 5, '& .MuiOutlinedInput-notchedOutline': { border: 'none'  } }}
-          />
+    <div style={{ width: '100%', height: '100%', backgroundColor: '#E5E4E2', padding: '16px' }}>
 
+      <Avatar alt="Image"
+        src={gitProfile.avatar_url} sx={{ width: 200, height: 200 }}
+        style={{ marginLeft: "auto", marginRight: "auto" }} />
 
-        <TextField
-            label="Full Name"
-            value={userData.fullName}
-            fullWidth
-            variant="outlined"
-            disabled  // Disable editing for the TextField
-            onChange={(e) => handleInputChange('username', e.target.value)}
-            InputLabelProps={{
-              style: { fontWeight: 'bold', fontSize: '25px' }, // Adjust font weight and size as needed
-            }}
-            sx={{ marginTop: 5, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
-          />
+      <br />
+      <br />
+      <Typography variant="h4" component="h4">
+        {gitProfile.name}
+      </Typography>
 
+      <Typography variant="h6" component="h6">
+        {gitProfile.login}
+      </Typography>
 
-        <TextField
-          label="Details"
-          multiline
-          rows={8}
-          value={userData.details}
-          fullWidth
-          variant="outlined"
-          disabled
-          onChange={(e) => handleInputChange('details', e.target.value)}
-          InputLabelProps={{
-            style: { fontWeight: 'bold', fontSize: '25px' }, // Adjust font weight and size as needed
-          }}
-          sx={{ marginTop: 5, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
-        />
+      <br />
+      <Typography variant="body2">
+        {gitProfile.bio}
+      </Typography>
 
-        {/* Additional details or menu items can be added here */}
+      <br />
+      <div style={{ display: "flex", gap: "20px" }}>
+        <Typography variant="body1">
+          <b>Followers</b>: {gitProfile.followers}
+        </Typography>
+
+        <Typography variant="body1">
+          <b>Followers</b>: {gitProfile.following}
+        </Typography>
       </div>
-    </Drawer>
+
+      <div style={{ display: "flex", gap: "20px" }}>
+        <Typography variant="body1">
+          <b>Public Repositories</b>: {gitProfile.public_repos}
+        </Typography>
+      </div>
+
+      <br/>
+      <div style={{ display: "flex", gap: "5px" }}>
+        <EmailOutlined className="icon" />
+        <Typography variant="body2">
+          {profile?.email || 'N/A'}
+        </Typography>
+      </div>
+
+      <div style={{ display: "flex", gap: "5px" }}>
+        <ApartmentOutlined className="icon" />
+        <Typography variant="body2">
+          {gitProfile?.company || 'N/A'}
+        </Typography>
+      </div>
+
+      <div style={{ display: "flex", gap: "5px" }}>
+        <LocationOnOutlined className="icon" />
+        <Typography variant="body2">
+          {gitProfile?.location || 'N/A'}
+        </Typography>
+      </div>
+
+      <div style={{ display: "flex", gap: "5px" }}>
+        <LinkOutlined className="icon" />
+        <Link style={{ width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+          href={"sddfsfsd"} variant="body2" color="inherit" target="_parent">
+          {gitProfile?.blog || 'N/A'}
+        </Link>
+      </div>
+
+    </div>
   );
 };
 

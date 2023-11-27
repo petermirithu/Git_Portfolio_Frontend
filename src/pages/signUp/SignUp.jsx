@@ -13,7 +13,7 @@ import { Backdrop, CircularProgress } from '@mui/material';
 import { sign_up_user, validateEmail } from '../../services/UserService';
 import { useSelector } from 'react-redux';
 import { checkIfLoggedIn } from '../../services/GlobalService';
-import { fetch_git_hub_user } from '../../services/GitService';
+import { check_git_hub_user } from '../../services/GitService';
 
 
 export default function SignUp() {
@@ -48,7 +48,7 @@ export default function SignUp() {
                 password: data.get('password')                
             }                     
 
-            await fetch_git_hub_user(payload.email).then(async response=>{                
+            await check_git_hub_user(payload.email).then(async response=>{                
                 if(response.data.total_count==1){
                     await sign_up_user(payload).then(result => {
                         setIsSubmitting(false);

@@ -50,8 +50,7 @@ export default function SignIn() {
                 dispatch(setUserProfile(result.data));
                 setIsSubmitting(false);
                 window.location.href = "/";
-            }).catch(error => {
-                console.log(error)
+            }).catch(error => {                
                 setIsSubmitting(false);
                 if (error?.response?.data == "invalidCredentials") {
                     alert("Seems like you provided an incorrect email or password!")

@@ -3,15 +3,19 @@ import { createSlice } from "@reduxjs/toolkit";
 export const UserProfileSlice = createSlice({
     name:"userProfile",
     initialState:{       
-        profile: null,          
+        profile: null,  
+        gitProfile: null,        
     },
     reducers:{                   
         setUserProfile:(state, action)=>{                   
-            state.userProfile=action.payload;            
-        },                                             
+            state.profile=action.payload;            
+        },   
+        setGitProfile:(state, action)=>{                   
+            state.gitProfile=action.payload;            
+        },                                           
     }
 });
 
-export const { setUserProfile } = UserProfileSlice.actions;
+export const { setUserProfile, setGitProfile} = UserProfileSlice.actions;
 
 export default UserProfileSlice.reducer;

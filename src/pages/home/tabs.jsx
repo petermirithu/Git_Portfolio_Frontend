@@ -43,16 +43,13 @@ export default function NavigationTabs() {
           <Tab icon={<ContactPhoneIcon />} label="Experience" />
         </Tabs>
 
+        <Box minHeight="300px" overflow="hidden">
         {value === 0 && <SkillsTab />}
-
-        {value === 1 && (
-          <ProjectsTab/>
-        )}
-
+        {value === 1 && <ProjectsTab/> }
         {value === 2 && <ContactTab />}
-
         {value === 3 && <ExperienceTab />}
       </Box>
+    </Box>
     </>
   );
 }

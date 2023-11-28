@@ -1,5 +1,6 @@
 import Axios from "../configurations/Interceptor";
-import { BACKEND_BASE_URL } from "./GlobalService";
+
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL
 
 export const validateEmail = (text) => {
     const regex1 = /^\S+@\S+\.\S+$/;

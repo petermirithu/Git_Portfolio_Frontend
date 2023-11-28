@@ -1,8 +1,6 @@
 import Store from "../redux/Store";
 import { setUserProfile } from "../redux/UserProfileSlice";
 
-export const BACKEND_BASE_URL = "http://127.0.0.1:8050";
-
 export const checkIfLoggedIn = () => {
     return new Promise((resolve, reject) => {
         const cachedData = localStorage.getItem('user_profile');

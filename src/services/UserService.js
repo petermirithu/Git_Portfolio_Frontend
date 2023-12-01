@@ -28,3 +28,11 @@ export const forgot_password = (payload) => {
 export const reset_password = (payload) => {    
     return Axios.put(BACKEND_BASE_URL + "/api/reset_password", payload);
 }
+
+export const update_socials = (payload) => {    
+    return Axios.put(BACKEND_BASE_URL + "/api/update_socials", payload);
+}
+
+export const get_user = (email) => {    
+    return Axios.get(BACKEND_BASE_URL + "/api/get_user/"+email);
+}

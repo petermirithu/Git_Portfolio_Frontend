@@ -169,6 +169,7 @@ const ProjectsTab = () => {
     <Box
       component="div"
       style={{ margin: 30 }}
+      minWidth={930}
     >
       <Button style={{ float: "right" }} variant="contained" color="primary" onClick={handleAddProject}>
         Add Project
@@ -179,8 +180,7 @@ const ProjectsTab = () => {
 
       {(isLoading != false) ?
         <Box
-          component="div"
-          width={920}
+          component="div"          
         >
           <CircularProgress />
           <Typography variant="body1">Loading ...</Typography>

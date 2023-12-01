@@ -4,7 +4,7 @@ import { CircularProgress, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { fetch_git_hub_user_feed } from '../services/GitService';
 import Timeline from '@mui/lab/Timeline';
-import TimelineItem, { timelineItemClasses }from '@mui/lab/TimelineItem';
+import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
@@ -16,10 +16,11 @@ const GitActivityTab = () => {
     const { gitProfile } = useSelector((state) => state.userProfile);
     const [activities, setActivities] = React.useState(null);
 
-    const initPage = async () => {        
+    const initPage = async () => {
         await fetch_git_hub_user_feed(gitProfile.login).then(async response => {
             setIsLoading(false);
-            setActivities(response.data);            
+            console.log(response.data);
+            setActivities(response.data);
         }).catch(error => {
             setIsLoading(false);
             alert("Ooops! Something went wrong while fetching your git hub activity")
@@ -36,16 +37,22 @@ const GitActivityTab = () => {
     return (
         <Box
             component="div"
+            style={{ margin: 30 }}
+            minWidth={930}
         >
+            <Typography variant="h4" component="h4">Git Activity</Typography>                        
             {(isLoading != false) ?
                 <>
-                    <CircularProgress />                    
-                    <Typography variant="body1">Loading ...</Typography>
+                    <br></br>
+                    <Box
+                        component="div"
+                    >
+                        <CircularProgress />
+                        <Typography variant="body1">Loading ...</Typography>
+                    </Box>
                 </>
                 :
                 <>
-                    <Typography variant="h4" component="h4">Git Activity</Typography>
-
                     {activities?.length > 0 ?
                         <Timeline
                             sx={{
@@ -85,19 +92,24 @@ const GitActivityTab = () => {
                                                 <TimelineConnector />
                                             </TimelineSeparator>
                                             <TimelineContent>
-                                                <Typography variant="h6" component="h6">Closed PR in {activity.repo.name}</Typography>
-
+                                                <Typography variant="h6" component="h6">{activity.payload.action == "opened" ? "Opened" : "Closed"} PR in {activity.repo.name}</Typography>
                                                 <Typography variant="body1">
                                                     <b><i>{activity.payload.pull_request.user.login}:</i></b> {activity.payload.pull_request.title}
                                                 </Typography>
 
-                                                <Typography variant="body1">
-                                                    Merged by {activity.payload.pull_request?.merged_by?.login}
-                                                </Typography>
+                                                {(activity.payload.action == "opened") ?
+                                                    <></>
+                                                    :
+                                                    <>
+                                                        <Typography variant="body1">
+                                                            Merged by {activity.payload.pull_request?.merged_by?.login || "N/A"}
+                                                        </Typography>
 
-                                                <Typography variant="body1">
-                                                    Merged at {activity.payload.pull_request.merged_at}
-                                                </Typography>
+                                                        <Typography variant="body1">
+                                                            Merged at {activity.payload.pull_request.merged_at || "N/A"}
+                                                        </Typography>
+                                                    </>
+                                                }
                                             </TimelineContent>
                                         </TimelineItem>
                                         :
@@ -111,7 +123,7 @@ const GitActivityTab = () => {
                                                 <TimelineConnector />
                                             </TimelineSeparator>
                                             <TimelineContent>
-                                                <Typography variant="h6" component="h6">Created PR in {activity.repo.name}</Typography>
+                                                <Typography variant="h6" component="h6">Requested PR review in {activity.repo.name}</Typography>
 
                                                 <Typography variant="body1">
                                                     {activity.payload.pull_request.title}
@@ -122,7 +134,7 @@ const GitActivityTab = () => {
                                                 </Typography>
 
                                                 <Typography variant="body1">
-                                                    Requested at {activity.payload.pull_request.merged_at}
+                                                    Requested at {activity.payload.pull_request.updated_at}
                                                 </Typography>
                                             </TimelineContent>
                                         </TimelineItem>

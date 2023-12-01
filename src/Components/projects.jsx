@@ -155,7 +155,6 @@ const ProjectsTab = () => {
       setIsLoading(false);
       alert("Ooops! Something went wrong while fetching the projects")
     });
-
   }
 
   useEffect(() => {
@@ -186,6 +185,8 @@ const ProjectsTab = () => {
           <Typography variant="body1">Loading ...</Typography>
         </Box>
         :
+
+        
         <Box
           component="div"
           sx={{

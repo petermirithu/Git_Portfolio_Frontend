@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -6,12 +6,28 @@ import Modal from '@mui/material/Modal';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link } from '@mui/material';
+import { add_project, delete_project, get_projects, update_project } from '../services/PortfolioService';
+import { useSelector } from 'react-redux';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ProjectsTab = () => {
+  const didMount = useRef(false)
+  const { profile } = useSelector((state) => state.userProfile);
   const [open, setOpen] = useState(false);
-  const [projects, setProjects] = useState(Array(4).fill({}));
-  const [newProject, setNewProject] = useState({ name: '', description: '', technologies: '', link: '' });
+  const [projects, setProjects] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    technologies: '',
+    link: '',
+    user_id: profile.id,
+    project_id: ''
+  });
 
   const handleAddProject = () => {
     setOpen(true);
@@ -20,27 +36,62 @@ const ProjectsTab = () => {
   const handleClose = () => {
     setOpen(false);
     setEditIndex(null);
-    setNewProject({ name: '', description: '', technologies: '', link: '' });
+    setNewProject({
+      name: '',
+      description: '',
+      technologies: '',
+      link: '',
+      user_id: profile.id,
+      project_id: ''
+    });
   };
 
-  const handleSaveProject = () => {
-    if (editIndex !== null) {
-      setProjects((prevProjects) => {
-        const updatedProjects = [...prevProjects];
-        updatedProjects[editIndex] = newProject;
-        return updatedProjects;
-      });
-      setEditIndex(null);
-    } else {
-      setProjects((prevProjects) => {
-        const updatedProjects = [...prevProjects];
-        const emptyIndex = updatedProjects.findIndex((project) => Object.keys(project).length === 0);
-        updatedProjects[emptyIndex] = newProject;
-        return updatedProjects;
-      });
+  const handleSaveProject = async () => {
+    if (newProject.name?.length < 5) {
+      alert("Please enter a valid project name! Should me more than 5 characters.")
     }
-    setNewProject({ name: '', description: '', technologies: '', link: '' });
-    handleClose();
+    else if (newProject.description?.length < 10) {
+      alert("Please enter a valid project description! Should me more than 10 characters.")
+    }
+    else if (newProject.technologies?.length < 2) {
+      alert("Please enter valid project technologies! Should me more than 2 characters.")
+    }
+    else if (newProject.link?.length < 5) {
+      alert("Please enter a valid project link! Should me more than 5 characters.")
+    }
+    else {
+      setIsSubmitting(true);
+      if (editIndex !== null) {
+        let payload = { ...newProject };
+        payload.project_id = projects[editIndex].id;
+        await update_project(payload).then(response => {
+          setIsSubmitting(false);
+          alert("Successfully updated the project.");
+          handleClose();
+          fetchProjects()
+        }).catch(error => {
+          setIsSubmitting(false);
+          alert("Ooops! Something whent wrong while updating your project");
+        })
+        setEditIndex(null);
+      }
+      else {
+        await add_project(newProject).then(response => {
+          setIsSubmitting(false);
+          alert("Successfully saved the project.");
+          handleClose();
+          fetchProjects()
+        }).catch(error => {
+          setIsSubmitting(false);
+          if (error.response.data == "nameTaken") {
+            alert("Ooops! Seems like the project name you entered is taken.");
+          }
+          else {
+            alert("Ooops! Something whent wrong while saving your project");
+          }
+        })
+      }
+    }
   };
 
   const handleEditProject = (index) => {
@@ -49,6 +100,20 @@ const ProjectsTab = () => {
     setOpen(true);
   };
 
+  const handleDeleteProject = async (index) => {
+    if (confirm("Are your sure you want to delete this project?")) {
+      setIsLoading(true);
+      const projectId = projects[index].id;
+      await delete_project(projectId).then(response => {
+        setIsLoading(false);
+        alert("Successfully deleted the project");
+        fetchProjects()
+      }).catch(error => {
+        alert("Ooops! Something whent wrong while deleting your project");
+      });
+    }
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewProject((prevProject) => ({ ...prevProject, [name]: value }));
@@ -56,9 +121,18 @@ const ProjectsTab = () => {
 
   const renderTechnologies = (technologies) => {
     return technologies.split(',').map((tech, index) => (
-      <span key={index} style={{ backgroundColor: getRandomColor(), padding: '2px', margin: '2px', borderRadius: '50%' }}>
+      <Typography
+        variant="body2" color="text.secondary"
+        key={index}
+        style={{
+          backgroundColor: getRandomColor(),
+          padding: '5px',
+          marginRight: '5px',
+          borderRadius: '100px',
+          color: "white"
+        }}>
         {tech.trim()}
-      </span>
+      </Typography>
     ));
   };
 
@@ -71,66 +145,122 @@ const ProjectsTab = () => {
     return color;
   };
 
+  const fetchProjects = async () => {
+    setIsLoading(true);
+    await get_projects(profile.id).then(async response => {
+      setIsLoading(false);
+      console.log(response.data)
+      setProjects(response.data);
+    }).catch(error => {
+      setIsLoading(false);
+      alert("Ooops! Something went wrong while fetching the projects")
+    });
+
+  }
+
+  useEffect(() => {
+    if (didMount.current == false) {
+      didMount.current = true
+      fetchProjects();
+    }
+  }, [isLoading, projects]);
+
   return (
     <Box
       component="div"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginLeft: '200px', // Adjust the margin based on the width of your sidebar
-        '& > :not(style)': { m: 1 },
-      }}
-      noValidate
-      autoComplete="off"
+      style={{ margin: 30 }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: 2,
-        }}
-      >
-        {projects.map((project, index) => (
-          <Card key={index} variant="outlined" sx={{ minWidth: 250, maxWidth: 250, m: 1 }}>
-            <CardContent>
-              <Typography variant="h6" component="div">
-                {project.name || 'Project Name'}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {project.description || 'Add project'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {renderTechnologies(project.technologies || '')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {project.link || ''}
-              </Typography>
-              <Button variant="outlined" color="primary" onClick={() => handleEditProject(index)}>
-                Edit
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
-      <Button variant="contained" color="primary" onClick={handleAddProject}>
+      <Button style={{ float: "right" }} variant="contained" color="primary" onClick={handleAddProject}>
         Add Project
       </Button>
-      <Modal open={open} onClose={handleClose}>
+      <Typography variant="h4" component="h4">Projects</Typography>
+      <br />
+      <br />
+
+      {(isLoading != false) ?
         <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
+          component="div"
+          width={920}
         >
+          <CircularProgress />
+          <Typography variant="body1">Loading ...</Typography>
+        </Box>
+        :
+        <Box
+          component="div"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems:'flex-start',
+            '& > :not(style)': { m: 0 },
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              gap: 3,
+            }}
+          >
+            {projects.length == 0 ?
+              <>
+                <Box
+                  component="div"
+                  width={920}
+                >
+                  <Typography variant="body1">You have not added any project</Typography>
+                </Box>
+              </>
+              :
+              <>
+                {projects.map((project, index) => (
+                  <Card key={index} variant="outlined" sx={{ width: 460 }}>
+                    <CardContent>
+                      <Box style={{ float: "right", display: "flex", flexWrap: "nowrap", gap: "5px" }}>
+                        <Button variant="text" onClick={() => handleEditProject(index)}>
+                          <EditIcon className="icon" />
+                        </Button>
+                        <Button variant="text" onClick={() => handleDeleteProject(index)}>
+                          <DeleteIcon className="icon" />
+                        </Button>
+                      </Box>
+                      <Typography variant="h6" component="div">
+                        {project.name || 'Project Name'}
+                      </Typography>
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {project.description || 'Add project'}
+                      </Typography>
+                      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                        {renderTechnologies(project.technologies || '')}
+                      </div>
+                      <br />
+
+                      <Typography variant="body2" color="text.secondary">
+                        <Link href={project.link || ''} underline="none" rel="noopener" target="_blank">
+                          {project.link || ''}
+                        </Link>
+                      </Typography>                      
+                    </CardContent>
+                  </Card>
+                ))}
+              </>
+            }
+          </Box>
+        </Box>
+      }
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add a project</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To add a project, please fill in the form below all details required.
+          </DialogContentText>
+
           <TextField
+            key={"projectName"}
+            autoFocus
             label="Project Name"
             variant="outlined"
             fullWidth
@@ -140,6 +270,7 @@ const ProjectsTab = () => {
             onChange={handleInputChange}
           />
           <TextField
+            key={"projectDescription"}
             label="Description"
             variant="outlined"
             fullWidth
@@ -151,7 +282,8 @@ const ProjectsTab = () => {
             onChange={handleInputChange}
           />
           <TextField
-            label="Technologies Used"
+            key={"technologiesUsed"}
+            label="Technologies Used. Seperate using a Comma"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -160,6 +292,7 @@ const ProjectsTab = () => {
             onChange={handleInputChange}
           />
           <TextField
+            key={"gitlink"}
             label="GitHub Repository Link"
             variant="outlined"
             fullWidth
@@ -168,12 +301,22 @@ const ProjectsTab = () => {
             value={newProject.link}
             onChange={handleInputChange}
           />
-
-          <Button variant="contained" color="primary" onClick={handleSaveProject}>
-            {editIndex !== null ? 'Update Project' : 'Save Project'}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button disabled={isSubmitting} variant="contained" color="primary" onClick={handleSaveProject}>
+            {isSubmitting ?
+              <>
+                {editIndex !== null ? 'Updating Project ...' : "Saving Project ..."}
+              </>
+              :
+              <>
+                {editIndex !== null ? 'Update Project' : 'Save Project'}
+              </>
+            }
           </Button>
-        </Box>
-      </Modal>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

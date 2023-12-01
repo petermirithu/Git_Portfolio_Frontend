@@ -29,11 +29,14 @@ export default function NavigationTabs() {
         alignItems="center"
         justifyContent="center"
         minHeight="40vh"
+      
+  
       >
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="navigation tabs"          
+          aria-label="navigation tabs"
+          textColor='inherit'          
         >
           <Tab icon={<CodeIcon />} label="Skills" />
           <Tab icon={<WorkIcon />} label="Projects" />

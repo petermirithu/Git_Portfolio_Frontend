@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import { useSelector } from 'react-redux';
-import { Typography } from '@mui/material';
+import { Typography, Link} from '@mui/material';
 
 import { ApartmentOutlined, LocationOnOutlined, LinkOutlined, EmailOutlined } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   const { gitProfile } = useSelector((state) => state.userProfile);
   const { profile } = useSelector((state) => state.userProfile);
-
-  console.log(gitProfile)
+  
 
   return (
     <div style={{ width: '100%', height: '100%', backgroundColor: '#E5E4E2', padding: '16px' }}>
@@ -51,7 +49,7 @@ const Sidebar = () => {
         </Typography>
       </div>
 
-      <br/>
+      <br />
       <div style={{ display: "flex", gap: "5px" }}>
         <EmailOutlined className="icon" />
         <Typography variant="body2">
@@ -75,8 +73,9 @@ const Sidebar = () => {
 
       <div style={{ display: "flex", gap: "5px" }}>
         <LinkOutlined className="icon" />
+        
         <Link style={{ width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-          href={"sddfsfsd"} variant="body2" color="inherit" target="_parent">
+          href={gitProfile?.blog || 'N/A'} variant="body2" underline="none" rel="noopener" target="_blank">
           {gitProfile?.blog || 'N/A'}
         </Link>
       </div>

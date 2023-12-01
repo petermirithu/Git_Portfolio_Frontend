@@ -16,12 +16,10 @@ const GitActivityTab = () => {
     const { gitProfile } = useSelector((state) => state.userProfile);
     const [activities, setActivities] = React.useState(null);
 
-    const initPage = async () => {
-        console.log(gitProfile)
+    const initPage = async () => {        
         await fetch_git_hub_user_feed(gitProfile.login).then(async response => {
             setIsLoading(false);
-            setActivities(response.data);
-            console.log(response.data);
+            setActivities(response.data);            
         }).catch(error => {
             setIsLoading(false);
             alert("Ooops! Something went wrong while fetching your git hub activity")
@@ -42,7 +40,7 @@ const GitActivityTab = () => {
             {(isLoading != false) ?
                 <>
                     <CircularProgress />                    
-                    <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
+                    <Typography variant="body1">Loading ...</Typography>
                 </>
                 :
                 <>

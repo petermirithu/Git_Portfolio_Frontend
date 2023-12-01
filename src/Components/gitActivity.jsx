@@ -41,8 +41,8 @@ const GitActivityTab = () => {
         >
             {(isLoading != false) ?
                 <>
-                    <CircularProgress />
-                    <p style={{ marginLeft: 20 }}>Loading ...</p>
+                    <CircularProgress />                    
+                    <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
                 </>
                 :
                 <>

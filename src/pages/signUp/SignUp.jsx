@@ -100,7 +100,7 @@ export default function SignUp() {
                 overflow:"hidden"
             }}>
                 <CircularProgress />                
-                <p style={{marginLeft: 20}}>Loading ...</p>
+                <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
             </div>
         )
     }

@@ -182,8 +182,8 @@ function Navbar() {
               aria-haspopup="true"
               onClick={handleOpenUserMenu}
             >
-              <Avatar {...stringAvatar(`${userProfile?.first_name} ${userProfile?.last_name}`)} />
-              <p style={{ marginLeft: 10, color: "white" }}>{userProfile?.first_name} {userProfile?.last_name}</p>
+              <Avatar {...stringAvatar(`${userProfile?.first_name} ${userProfile?.last_name}`)} />            
+              <Typography style={{ marginLeft: 10, color:"white"}} variant="body1">{userProfile?.first_name} {userProfile?.last_name}</Typography>
             </Button>
 
             <Menu

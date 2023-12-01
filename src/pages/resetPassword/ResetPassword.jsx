@@ -100,8 +100,8 @@ export default function ResetPassword() {
                 height: '100vh',
                 overflow: "hidden"
             }}>
-                <CircularProgress />
-                <p style={{ marginLeft: 20 }}>Loading ...</p>
+                <CircularProgress />                
+                <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
             </div>
         )
     }

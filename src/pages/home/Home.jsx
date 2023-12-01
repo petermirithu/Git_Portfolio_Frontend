@@ -2,7 +2,7 @@ import * as React from 'react';
 import Tabs from './tabs';
 import Sidebar from '../../Components/Sidebar';
 import { checkIfLoggedIn } from '../../services/GlobalService';
-import { CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import Navbar from '../../Components/navbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { check_git_hub_user, fetch_git_hub_user_profile } from '../../services/GitService';
@@ -55,8 +55,8 @@ export default function Home() {
                 height: '100vh',
                 overflow: "hidden"
             }}>
-                <CircularProgress />
-                <p style={{ marginLeft: 20 }}>Loading ...</p>
+                <CircularProgress />                
+                <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
             </div>
         )
     }

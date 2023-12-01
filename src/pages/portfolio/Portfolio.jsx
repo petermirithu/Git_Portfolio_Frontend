@@ -18,6 +18,10 @@ import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import Tabs from '../home/tabs';
 import Navbar from '../../Components/navbar';
+import { check_git_hub_user, fetch_git_hub_user_profile } from '../../services/GitService';
+import { setGitProfile } from '../../redux/UserProfileSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { get_user } from '../../services/UserService';
 
 const theme = createTheme();
 
@@ -30,6 +34,7 @@ const socialPlatforms = [
 ];
 
 export default function Portfolio() {
+  const dispatch = useDispatch();
   const { email } = useParams();
   const [isLoading, setIsLoading] = React.useState(true);
   const didMount = React.useRef(false);
@@ -40,21 +45,43 @@ export default function Portfolio() {
     youtube: '',
     whatsapp: '',
   });
+  const { gitProfile } = useSelector((state) => state.userProfile);
+
+
+  const getUser = async () => {
+    await check_git_hub_user(email).then(async response => {
+      await fetch_git_hub_user_profile(response.data.items[0].login).then(async response => {
+        dispatch(setGitProfile(response.data));
+        setIsLoading(false);
+        // await get_user(email).then(result => {          
+        //   setSocialLinks({
+        //     github: result.data.github,
+        //     linkedin: result.data.linkedin,
+        //     twitter: result.data.twitter,
+        //     youtube: result.data.youtube,
+        //     whatsapp: result.data.whatsapp,
+        //   })
+
+        // }).catch(error => {
+        //   setIsLoading(false);
+        //   alert("Ooops! Something went wrong while fetching the user profile details from our server")
+        // })
+      }).catch(error => {
+        setIsLoading(false);
+        alert("Ooops! Something went wrong while fetching the user profile details from Git Hub")
+      });
+    }).catch(error => {
+      setIsLoading(false);
+      alert("The email you entered is NOT linked to any git hub account!")
+    });
+  }
 
   React.useEffect(() => {
     if (didMount.current === false) {
       didMount.current = true;
-      // authGuard();
-      setIsLoading(false);
+      getUser();
     }
   }, [isLoading]);
-
-  const handleLinkChange = (platform, link) => {
-    setSocialLinks((prevLinks) => ({
-      ...prevLinks,
-      [platform]: link,
-    }));
-  };
 
   if (isLoading) {
     return (
@@ -102,7 +129,7 @@ export default function Portfolio() {
             <Grid item xs={12} md={6} sx={{ textAlign: 'left' }}>
               <Avatar
                 alt="Pyra Avatar"
-                src="https://source.unsplash.com/150x150/?avatar"
+                src={gitProfile.avatar_url}
                 sx={{
                   width: 500,
                   height: 500,
@@ -121,7 +148,7 @@ export default function Portfolio() {
                   gutterBottom
                   sx={{ marginTop: 10 }}
                 >
-                  Hello, My name is Pyra.
+                  Hello, My name is {gitProfile.name || "N/A"}
                 </Typography>
                 <Typography
                   variant="h6"
@@ -130,66 +157,66 @@ export default function Portfolio() {
                   paragraph
                   sx={{ marginTop: 2 }}
                 >
-                  I am a Software Engineer passionate about Python and JavaScript. I specialize in Software and Mobile App Development with AI integrations from scratch.
+                  {gitProfile.bio || "N/A"}
                 </Typography>
                 <Container
-                sx={{
-                  bgcolor: 'background.paper',
-                  pt: 4,
-                  pb: 4,
-                  textAlign: 'center',
-                  boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
-                  
-                }}
-                >
-                <Typography
-                  component="h6"
-                  variant="h6"
-                  align="center"
-                  color="text.primary"
-                  gutterBottom
-                  sx={{ fontStyle: 'italic', fontWeight: 'light' }}
-                >
-                  You can find at:-
-                </Typography>
-                <ButtonGroup
-                  orientation="horizontal"
                   sx={{
-                    mt: 2,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 2,
+                    bgcolor: 'background.paper',
+                    pt: 4,
+                    pb: 4,
+                    textAlign: 'center',
+                    boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
+
                   }}
                 >
-                  {socialPlatforms.map((platform) => (
-                    <Tooltip title={platform.name} arrow key={platform.key}>
-                      <Button
-                        color="primary"
-                        onClick={() => window.open(socialLinks[platform.key], '_blank')}
-                        sx={{
-                          '&:hover': {
-                            backgroundColor: '#007BFF',
-                          },
-                        }}
-                      >
-                        {platform.icon}
-                      </Button>
-                    </Tooltip>
-                  ))}
-                </ButtonGroup>
+                  <Typography
+                    component="h6"
+                    variant="h6"
+                    align="center"
+                    color="text.primary"
+                    gutterBottom
+                    sx={{ fontStyle: 'italic', fontWeight: 'light' }}
+                  >
+                    You can find at:-
+                  </Typography>
+                  <ButtonGroup
+                    orientation="horizontal"
+                    sx={{
+                      mt: 2,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      gap: 2,
+                    }}
+                  >
+                    {socialPlatforms.map((platform) => (
+                      <Tooltip title={platform.name} arrow key={platform.key}>
+                        <Button
+                          color="primary"
+                          onClick={() => window.open(socialLinks[platform.key], '_blank')}
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: '#007BFF',
+                            },
+                          }}
+                        >
+                          {platform.icon}
+                        </Button>
+                      </Tooltip>
+                    ))}
+                  </ButtonGroup>
                 </Container>
               </Container>
             </Grid>
             {/* Contacts section */}
-            
+
           </Grid>
         </Container>
 
         {/* Cards section */}
         <Container sx={{ py: 8 }} maxWidth="md">
+          {/* <Tabs /> */}
         </Container>
-        <Tabs/>
       </main>
     </ThemeProvider>
   );

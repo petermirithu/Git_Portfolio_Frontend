@@ -63,11 +63,6 @@ function Navbar() {
       },
       children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
     };
-  }  
-
-  const openProfile = () => {
-    alert("Profile")
-    handleCloseUserMenu();
   }
 
   const logOut = () => {
@@ -77,7 +72,7 @@ function Navbar() {
   }
 
   React.useEffect(() => {
-    if (userProfile == null) {
+    if (userProfile == null && !window.location.href.includes("portfolio")) {
       const tempProfile = localStorage.getItem("user_profile")
       if (tempProfile?.length > 0) {
         setUserProfile(JSON.parse(tempProfile));
@@ -175,38 +170,45 @@ function Navbar() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Button
-              sx={{ p: 0 }}
-              id="menu-appbar"
-              aria-controls="basic-menu"
-              aria-haspopup="true"
-              onClick={handleOpenUserMenu}
-            >
-              <Avatar {...stringAvatar(`${userProfile?.first_name} ${userProfile?.last_name}`)} />            
-              <Typography style={{ marginLeft: 10, color:"white"}} variant="body1">{userProfile?.first_name} {userProfile?.last_name}</Typography>
-            </Button>
+            {userProfile == null ?
+              <Button onClick={()=> window.location.href = "/"} variant="outlined" color="error" style={{color:"white"}}>
+                Sign In
 
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >             
-              <MenuItem onClick={openProfile}>
-                <Typography textAlign="center">Profile</Typography>
-              </MenuItem>
-              <MenuItem onClick={logOut}><Typography textAlign="center">Sign Out</Typography></MenuItem>
-            </Menu>
+              </Button>
+              :
+              <>
+                <Button
+                  sx={{ p: 0 }}
+                  id="menu-appbar"
+                  aria-controls="basic-menu"
+                  aria-haspopup="true"
+                  onClick={handleOpenUserMenu}
+                >
+                  <Avatar {...stringAvatar(`${userProfile?.first_name} ${userProfile?.last_name}`)} />
+                  <Typography style={{ marginLeft: 10, color: "white" }} variant="body1">{userProfile?.first_name} {userProfile?.last_name}</Typography>
+                </Button>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem onClick={logOut}><Typography textAlign="center">Sign Out</Typography></MenuItem>
+                </Menu>
+              </>
+            }
+
+
           </Box>
         </Toolbar>
       </Container>

@@ -1,165 +1,123 @@
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
-import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
-const SkillsTab = () => {
+const CustomTimeline = () => {
   const [open, setOpen] = useState(false);
-  const [skills, setSkills] = useState([]);
-  const [progressValues, setProgressValues] = useState({});
-  const [selectedSkill, setSelectedSkill] = useState('');
-  const [newSkill, setNewSkill] = useState('');
+  const [entries, setEntries] = useState([]);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [newEntry, setNewEntry] = useState('');
   const [formError, setFormError] = useState(false);
 
-  const handleOpen = (skill) => {
-    setSelectedSkill(skill);
-    setNewSkill(skill);
+  const randomColor = () => {
+    const colors = ['primary', 'secondary', 'success', 'info', 'warning', 'error'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const handleOpen = (entry) => {
+    setSelectedEntry(entry);
+    setNewEntry(entry ? entry.label : '');
     setFormError(false);
     setOpen(true);
   };
 
   const handleClose = () => {
-    setSelectedSkill('');
-    setNewSkill('');
+    setSelectedEntry(null);
+    setNewEntry('');
     setFormError(false);
     setOpen(false);
   };
 
-  const handleSaveSkills = () => {
-    if (!newSkill.trim()) {
+  const handleSaveEntry = () => {
+    if (!newEntry.trim()) {
       setFormError(true);
       return;
     }
 
-    const updatedSkills = [...skills];
-    if (selectedSkill) {
-      const index = updatedSkills.indexOf(selectedSkill);
+    const updatedEntries = [...entries];
+    if (selectedEntry) {
+      const index = updatedEntries.findIndex((entry) => entry.id === selectedEntry.id);
       if (index !== -1) {
-        updatedSkills[index] = newSkill;
-        setProgressValues((prevValues) => ({
-          ...prevValues,
-          [newSkill]: prevValues[selectedSkill],
-          [selectedSkill]: prevValues[selectedSkill] || 0,
-        }));
+        updatedEntries[index] = { ...selectedEntry, label: newEntry, color: randomColor() };
       }
     } else {
-      updatedSkills.push(newSkill);
-      setProgressValues((prevValues) => ({
-        ...prevValues,
-        [newSkill]: prevValues[selectedSkill] || 0,
-      }));
+      const newId = entries.length > 0 ? entries[entries.length - 1].id + 1 : 1;
+      updatedEntries.push({ id: newId, label: newEntry, color: randomColor() });
     }
 
-    setSkills(updatedSkills);
-    setNewSkill('');
+    setEntries(updatedEntries);
+    setNewEntry('');
     setFormError(false);
     handleClose();
   };
 
-  const handleDeleteSkill = () => {
-    const updatedSkills = skills.filter((skill) => skill !== selectedSkill);
-    setSkills(updatedSkills);
-    setProgressValues((prevValues) => {
-      const { [selectedSkill]: _, ...rest } = prevValues;
-      return rest;
-    });
+  const handleDeleteEntry = () => {
+    const updatedEntries = entries.filter((entry) => entry.id !== selectedEntry.id);
+    setEntries(updatedEntries);
     handleClose();
   };
 
-  const handleSliderChange = (event, value) => {
-    setProgressValues((prevValues) => ({
-      ...prevValues,
-      [newSkill]: value,
-    }));
-  };
-
   return (
-    <Box
-      component="div"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        '& > :not(style)': { m: 1 },
-      }}
-    >
-      {skills.map((skill, index) => (
-        <Box key={index} sx={{ width: '100%', textAlign: 'center', mt: 2 }}>
-          <Chip
-            label={`${skill} - ${progressValues[skill] || 0}%`}
-            color="primary"
-            onClick={() => handleOpen(skill)}
-            sx={{ m: 0.5, cursor: 'pointer' }}
-            onDelete={() => handleDeleteSkill(skill)}
-          />
-          <Slider
-            value={progressValues[skill] || 0}
-            onChange={handleSliderChange}
-            valueLabelDisplay="auto"
-            valueLabelFormat={(value) => `${value}%`}
-            sx={{ width: '50%', margin: 'auto', color: 'primary.main' }}
-          />
-        </Box>
-      ))}
-      <Button variant="contained" color="primary" onClick={() => handleOpen('')}>
-        Add/Edit Skills
+    <div>
+      <Timeline
+        sx={{
+          [`& .${timelineItemClasses.root}:before`]: {
+            flex: 0,
+            padding: 0,
+          },
+        }}
+      >
+        {entries.map((entry) => (
+          <TimelineItem key={entry.id}>
+            <TimelineSeparator>
+              <TimelineDot color={entry.color} />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent onClick={() => handleOpen(entry)}>
+              <Chip label={entry.label} color={entry.color} />
+            </TimelineContent>
+          </TimelineItem>
+        ))}
+      </Timeline>
+      <Button variant="contained" color="primary" onClick={() => handleOpen(null)}>
+        Add Skills
       </Button>
       <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 300, bgcolor: 'white', boxShadow: 24, p: 4 }}>
           <Typography gutterBottom>
-            {selectedSkill ? `Adjust the proficiency level for ${selectedSkill}:` : 'Enter a new skill to add:'}
+            {selectedEntry ? 'Edit Entry:' : 'Add New Entry:'}
           </Typography>
-          {selectedSkill && (
-            <>
-              <Slider
-                value={progressValues[newSkill] || 0}
-                onChange={handleSliderChange}
-                valueLabelDisplay="auto"
-                valueLabelFormat={(value) => `${value}%`}
-                sx={{ width: '70%', margin: 'auto', color: 'primary.main' }}
-              />
-              <Typography variant="h6" gutterBottom>
-                {progressValues[newSkill] || 0}%
-              </Typography>
-              <Button variant="outlined" color="secondary" onClick={handleDeleteSkill}>
-                Delete
-              </Button>
-            </>
-          )}
-          {!selectedSkill && (
-            <TextField
-              label="Skill"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              error={formError}
-              helperText={formError ? 'Skill name cannot be empty' : ''}
-            />
-          )}
-          <Button variant="contained" color="primary" onClick={handleSaveSkills}>
+          <TextField
+            label="Label"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={newEntry}
+            onChange={(e) => setNewEntry(e.target.value)}
+            error={formError}
+            helperText={formError ? 'Label cannot be empty' : ''}
+          />
+          <Button variant="contained" color="primary" onClick={handleSaveEntry}>
             Save
           </Button>
-        </Box>
+          {selectedEntry && (
+            <Button variant="outlined" color="secondary" onClick={handleDeleteEntry}>
+              Delete
+            </Button>
+          )}
+        </div>
       </Modal>
-    </Box>
+    </div>
   );
 };
 
-export default SkillsTab;
+export default CustomTimeline;

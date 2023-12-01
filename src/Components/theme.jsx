@@ -1,21 +1,34 @@
-// src/DarkModePage.js
-import React from 'react';
-import { Paper, Typography, Button } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
-const DarkModePage = ({ darkMode, toggleDarkMode }) => {
-  return (
-    <Paper elevation={3} style={{ padding: 16, textAlign: 'center' }}>
-      <Typography variant="h4" gutterBottom>
-        Dark Mode Page
-      </Typography>
-      <Typography variant="body1" paragraph>
-        This is a sample page. Dark mode is {darkMode ? 'enabled' : 'disabled'}.
-      </Typography>
-      <Button variant="contained" color="primary" onClick={toggleDarkMode}>
-        Toggle Dark Mode
-      </Button>
-    </Paper>
-  );
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+    // Add more palette colors or customize other theme properties as needed
+  },
+  // Add other customizations like typography, spacing, etc.
+});
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ab003c',
+    },
+    secondary: {
+      main: '#f50057',
+    },
+    // Add more palette colors or customize other theme properties as needed
+  },
+  // Add other customizations like typography, spacing, etc.
+});
+
+export default {
+  lightTheme,
+  darkTheme,
 };
-
-export default DarkModePage;

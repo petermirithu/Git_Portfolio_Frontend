@@ -11,14 +11,19 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { GitHub } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { setSelectedTheme } from '../redux/UserProfileSlice';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import themes from "./theme";
 
 const pages = [];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
 function Navbar() {
+  const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [userProfile, setUserProfile] = React.useState(null);
+  const [darkMode, setDarkMode] = React.useState(false);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -71,6 +76,15 @@ function Navbar() {
     window.location.href = "/signIn";
   }
 
+  const toggleDarkMode = () => {
+    const selectedTheme = !darkMode ? themes.darkTheme : themes.lightTheme;
+
+    console.log(selectedTheme)
+
+    setDarkMode(!darkMode);
+    dispatch(setSelectedTheme(selectedTheme))
+  };
+
   React.useEffect(() => {
     if (userProfile == null && !window.location.href.includes("portfolio")) {
       const tempProfile = localStorage.getItem("user_profile")
@@ -81,7 +95,7 @@ function Navbar() {
         window.location.href = "/"
       }
     }
-  }, [userProfile])
+  }, [userProfile, darkMode])
 
   return (
     <AppBar position="static">
@@ -170,10 +184,16 @@ function Navbar() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {userProfile == null ?
-              <Button onClick={()=> window.location.href = "/"} variant="outlined" color="error" style={{color:"white"}}>
-                Sign In
+            <IconButton onClick={toggleDarkMode} style={{ marginRight: 10 }}>
+              <Typography variant='body1' style={{marginRight: 10}}>
+                Change Mode:
+              </Typography>
+              {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
 
+            {userProfile == null ?
+              <Button onClick={() => window.location.href = "/"} variant="outlined" color="error" style={{ color: "white" }}>
+                Sign In
               </Button>
               :
               <>

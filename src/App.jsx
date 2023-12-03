@@ -7,27 +7,13 @@ import SignUp from './pages/signUp/SignUp';
 import ForgotPassword from './pages/forgotPassword/ForgotPassword';
 import ResetPassword from './pages/resetPassword/ResetPassword';
 import Portfolio from './pages/portfolio/Portfolio';
-import themes from './Components/theme'; 
-import { IconButton } from '@mui/material';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useSelector } from 'react-redux';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setDarkMode((prevDarkMode) => !prevDarkMode);
-  };
-
-  const selectedTheme = darkMode ? themes.darkTheme : themes.lightTheme;
+  const { selectedTheme } = useSelector((state) => state.userProfile);  
 
   return (
-    <ThemeProvider theme={selectedTheme}>
-      <div style={{ textAlign: 'center', paddingTop: '10px' }}>
-        <IconButton onClick={toggleDarkMode}>
-          {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
-      </div>
+    <ThemeProvider theme={selectedTheme}>      
       <BrowserRouter>
         <Routes>
           <Route path="/">

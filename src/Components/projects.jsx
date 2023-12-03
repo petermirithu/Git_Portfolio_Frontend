@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link } from '@mui/material';
+import { Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link } from '@mui/material';
 import { add_project, delete_project, get_projects, update_project } from '../services/PortfolioService';
 import { useSelector } from 'react-redux';
 import EditIcon from '@mui/icons-material/Edit';
@@ -120,29 +120,14 @@ const ProjectsTab = () => {
   };
 
   const renderTechnologies = (technologies) => {
-    return technologies.split(',').map((tech, index) => (
-      <Typography
-        variant="body2" color="text.secondary"
-        key={index}
-        style={{
-          backgroundColor: getRandomColor(),
-          padding: '5px',
-          marginRight: '5px',
-          borderRadius: '100px',
-          color: "white"
-        }}>
-        {tech.trim()}
-      </Typography>
+    return technologies.split(',').map((tech, index) => (      
+      <Chip key={index} label={tech.trim()} color={randomColor()} />      
     ));
   };
 
-  const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+  const randomColor = () => {
+    const colors = ['primary', 'secondary', 'success', 'info', 'warning', 'error'];
+    return colors[Math.floor(Math.random() * colors.length)];
   };
 
   const fetchProjects = async () => {

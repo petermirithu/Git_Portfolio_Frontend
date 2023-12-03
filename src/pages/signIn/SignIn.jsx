@@ -14,6 +14,7 @@ import { sign_in_user, validateEmail } from '../../services/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserProfile } from '../../redux/UserProfileSlice';
 import { checkIfLoggedIn } from '../../services/GlobalService';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -22,6 +23,7 @@ export default function SignIn() {
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { profile } = useSelector((state) => state.userProfile);
 
 
@@ -48,8 +50,8 @@ export default function SignIn() {
                 delete result.data.auth_token;
                 localStorage.setItem("user_profile", JSON.stringify(result?.data));
                 dispatch(setUserProfile(result.data));
-                setIsSubmitting(false);
-                window.location.href = "/";
+                setIsSubmitting(false);                
+                navigate('/');
             }).catch(error => {                
                 setIsSubmitting(false);
                 if (error?.response?.data == "invalidCredentials") {
@@ -64,8 +66,9 @@ export default function SignIn() {
 
     const authGuard = async () => {
         await checkIfLoggedIn().then(response => {
-            if (response == true) {
-                window.location.href = "/";
+            if (response == true) {                
+                navigate('/');
+                return
             }
             setIsLoading(false);
         });

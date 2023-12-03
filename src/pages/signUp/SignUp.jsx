@@ -14,12 +14,13 @@ import { sign_up_user, validateEmail } from '../../services/UserService';
 import { useSelector } from 'react-redux';
 import { checkIfLoggedIn } from '../../services/GlobalService';
 import { check_git_hub_user } from '../../services/GitService';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function SignUp() {
     const [isLoading, setIsLoading] = React.useState(null);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
-    
+    const navigate = useNavigate();
     const { profile } = useSelector((state) => state.userProfile);
 
     const handleSubmit = async (event) => {        
@@ -52,8 +53,8 @@ export default function SignUp() {
                 if(response.data.total_count==1){
                     await sign_up_user(payload).then(result => {
                         setIsSubmitting(false);
-                        alert("Successfully created an account for you.\nNow sign in to verify your account!");
-                        window.location.href = "/signIn"
+                        alert("Successfully created an account for you.\nNow sign in to verify your account!");                        
+                        navigate('/signIn');
                     }).catch(error => {                        
                         setIsSubmitting(false);
                         if (error?.response?.data == "emailTaken") {
@@ -76,8 +77,9 @@ export default function SignUp() {
 
     const authGuard = async () => {                
         await checkIfLoggedIn().then(response => {            
-            if (response == true) {
-                window.location.href = "/";
+            if (response == true) {                
+                navigate('/');
+                return
             }
             setIsLoading(false);
         });

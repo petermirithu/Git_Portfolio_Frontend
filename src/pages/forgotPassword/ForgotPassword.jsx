@@ -14,6 +14,7 @@ import { forgot_password, sign_in_user, validateEmail } from '../../services/Use
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserProfile } from '../../redux/UserProfileSlice';
 import { checkIfLoggedIn } from '../../services/GlobalService';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -22,6 +23,7 @@ export default function ForgotPassword() {
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { profile } = useSelector((state) => state.userProfile);
 
 
@@ -42,8 +44,8 @@ export default function ForgotPassword() {
             await forgot_password(payload).then(result => {                                
                 alert(result.data);
                 localStorage.setItem("email", payload.email);
-                setIsSubmitting(false);
-                window.location.href = "resetPassword";
+                setIsSubmitting(false);                
+                navigate('/resetPassword');
             }).catch(error => {                
                 setIsSubmitting(false);                
                 alert("Oops! Something went wrong while sending you the verification code.")
@@ -53,8 +55,9 @@ export default function ForgotPassword() {
 
     const authGuard = async () => {
         await checkIfLoggedIn().then(response => {
-            if (response == true) {
-                window.location.href = "/";
+            if (response == true) {                
+                navigate('/');
+                return
             }
             setIsLoading(false);
         });

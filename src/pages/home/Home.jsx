@@ -8,8 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { check_git_hub_user, fetch_git_hub_user_profile } from '../../services/GitService';
 import { setGitProfile } from '../../redux/UserProfileSlice';
 import Store from '../../redux/Store';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = React.useState(true);
     const didMount = React.useRef(false)
@@ -32,8 +34,9 @@ export default function Home() {
 
     const authGuard = async () => {
         await checkIfLoggedIn().then(response => {
-            if (response != true) {
-                window.location.href = "signIn";
+            if (response != true) {                
+                navigate('/signIn');
+                return
             }
             initPage()
         });

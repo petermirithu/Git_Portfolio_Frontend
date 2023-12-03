@@ -85,7 +85,7 @@ function Navbar() {
   };
 
   React.useEffect(() => {
-    if (userProfile == null && !window.location.href.includes("portfolio")) {
+    if (userProfile == null) {
       const tempProfile = localStorage.getItem("user_profile")
       if (tempProfile?.length > 0) {
         setUserProfile(JSON.parse(tempProfile));

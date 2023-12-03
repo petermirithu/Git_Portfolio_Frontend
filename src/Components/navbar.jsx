@@ -16,9 +16,11 @@ import { setSelectedTheme } from '../redux/UserProfileSlice';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import themes from "./theme";
+import { useNavigate } from 'react-router-dom';
 
 const pages = [];
 function Navbar() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -72,15 +74,12 @@ function Navbar() {
 
   const logOut = () => {
     localStorage.clear()
-    handleCloseUserMenu();
-    window.location.href = "/signIn";
+    handleCloseUserMenu();    
+    navigate('/signIn');                
   }
 
   const toggleDarkMode = () => {
-    const selectedTheme = !darkMode ? themes.darkTheme : themes.lightTheme;
-
-    console.log(selectedTheme)
-
+    const selectedTheme = !darkMode ? themes.darkTheme : themes.lightTheme;    
     setDarkMode(!darkMode);
     dispatch(setSelectedTheme(selectedTheme))
   };
@@ -91,8 +90,8 @@ function Navbar() {
       if (tempProfile?.length > 0) {
         setUserProfile(JSON.parse(tempProfile));
       }
-      else {
-        window.location.href = "/"
+      else {        
+        navigate('/');                 
       }
     }
   }, [userProfile, darkMode])
@@ -192,7 +191,7 @@ function Navbar() {
             </IconButton>
 
             {userProfile == null ?
-              <Button onClick={() => window.location.href = "/"} variant="outlined" color="error" style={{ color: "white" }}>
+              <Button onClick={() => navigate('/')} variant="outlined" color="error" style={{ color: "white" }}>
                 Sign In
               </Button>
               :

@@ -14,6 +14,7 @@ import { reset_password, sign_in_user, validateEmail } from '../../services/User
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserProfile } from '../../redux/UserProfileSlice';
 import { checkIfEmail, checkIfLoggedIn } from '../../services/GlobalService';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -23,6 +24,7 @@ export default function ResetPassword() {
     const [email, setEmail] = React.useState(null);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { profile } = useSelector((state) => state.userProfile);
 
 
@@ -31,8 +33,8 @@ export default function ResetPassword() {
         const data = new FormData(event.currentTarget);
 
         if (email == null) {            
-            alert("Seems like your email was not cached. Got back to forgot password page to and enter the email again.")
-            window.location.href = "forgotPassword";
+            alert("Seems like your email was not cached. Got back to forgot password page to and enter the email again.")            
+            navigate('/forgotPassword');
         }
         else if (data.get('verificationCode')?.length != 6) {
             alert("Please enter a valid verification code that is 6 characters");
@@ -54,8 +56,8 @@ export default function ResetPassword() {
 
             await reset_password(payload).then(result => {
                 alert("Successfully reset your password!\nYou can now Sign in using your new password.")
-                setIsSubmitting(false);
-                window.location.href = "signIn";
+                setIsSubmitting(false);                
+                navigate('/signIn');
             }).catch(error => {
                 console.log(error)
                 setIsSubmitting(false);                                                
@@ -74,8 +76,9 @@ export default function ResetPassword() {
 
     const authGuard = async () => {
         await checkIfLoggedIn().then(async response => {
-            if (response == true) {
-                window.location.href = "/";
+            if (response == true) {                
+                navigate('/');
+                return
             }            
             await checkIfEmail().then(result=>{
                 setEmail(result);

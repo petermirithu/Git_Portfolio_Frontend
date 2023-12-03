@@ -23,7 +23,7 @@ export default function SignUp() {
     const navigate = useNavigate();
     const { profile } = useSelector((state) => state.userProfile);
 
-    const handleSubmit = async (event) => {        
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -46,16 +46,16 @@ export default function SignUp() {
                 first_name: data.get('firstName'),
                 last_name: data.get('lastName'),
                 email: data.get('email'),
-                password: data.get('password')                
-            }                     
+                password: data.get('password')
+            }
 
-            await check_git_hub_user(payload.email).then(async response=>{                
-                if(response.data.total_count==1){
+            await check_git_hub_user(payload.email).then(async response => {
+                if (response.data.total_count == 1) {
                     await sign_up_user(payload).then(result => {
                         setIsSubmitting(false);
-                        alert("Successfully created an account for you.\nNow sign in to verify your account!");                        
+                        alert("Successfully created an account for you.\nNow sign in to verify your account!");
                         navigate('/signIn');
-                    }).catch(error => {                        
+                    }).catch(error => {
                         setIsSubmitting(false);
                         if (error?.response?.data == "emailTaken") {
                             alert("Oops! Seems like the email you used is already taken")
@@ -65,19 +65,19 @@ export default function SignUp() {
                         }
                     });
                 }
-                else{
+                else {
                     setIsSubmitting(false);
                     alert("The email you entered is NOT linked to any git hub account!")
-                }                
-            }).catch(error => {                
+                }
+            }).catch(error => {
                 alert("Ooops! Something went wrong while looking you up in Git Hub")
-            });            
+            });
         }
     };
 
-    const authGuard = async () => {                
-        await checkIfLoggedIn().then(response => {            
-            if (response == true) {                
+    const authGuard = async () => {
+        await checkIfLoggedIn().then(response => {
+            if (response == true) {
                 navigate('/');
                 return
             }
@@ -99,9 +99,9 @@ export default function SignUp() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100vh',
-                overflow:"hidden"
+                overflow: "hidden"
             }}>
-                <CircularProgress />                
+                <CircularProgress />
                 <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
             </div>
         )
@@ -201,7 +201,13 @@ export default function SignUp() {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="/signIn" variant="body2">
+                                <Link
+                                    component="button"
+                                    variant="body2"
+                                    onClick={() => {
+                                        navigate("/signIn")
+                                    }}
+                                >
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>

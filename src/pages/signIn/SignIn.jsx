@@ -50,9 +50,9 @@ export default function SignIn() {
                 delete result.data.auth_token;
                 localStorage.setItem("user_profile", JSON.stringify(result?.data));
                 dispatch(setUserProfile(result.data));
-                setIsSubmitting(false);                
+                setIsSubmitting(false);
                 navigate('/');
-            }).catch(error => {                
+            }).catch(error => {
                 setIsSubmitting(false);
                 if (error?.response?.data == "invalidCredentials") {
                     alert("Seems like you provided an incorrect email or password!")
@@ -66,7 +66,7 @@ export default function SignIn() {
 
     const authGuard = async () => {
         await checkIfLoggedIn().then(response => {
-            if (response == true) {                
+            if (response == true) {
                 navigate('/');
                 return
             }
@@ -160,13 +160,25 @@ export default function SignIn() {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link href="/forgotPassword" variant="body2">
-                                    {"Forgot your password?"}
+                                <Link
+                                    component="button"
+                                    variant="body2"
+                                    onClick={() => {
+                                        navigate("/forgotPassword")
+                                    }}
+                                >
+                                    Forgot your password?
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="/signUp" variant="body2">
-                                    {"Don't have an account? Sign Up"}
+                                <Link
+                                    component="button"
+                                    variant="body2"
+                                    onClick={() => {
+                                        navigate("/signUp")
+                                    }}
+                                >
+                                    Don't have an account? Sign Up
                                 </Link>
                             </Grid>
                         </Grid>

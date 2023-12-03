@@ -33,21 +33,21 @@ export default function ForgotPassword() {
 
         if (validateEmail(data.get('email')) == false) {
             alert("Please enter a valid email");
-        }        
+        }
         else {
             setIsSubmitting(true);
 
             const payload = {
-                email: data.get('email'),                
+                email: data.get('email'),
             }
 
-            await forgot_password(payload).then(result => {                                
+            await forgot_password(payload).then(result => {
                 alert(result.data);
                 localStorage.setItem("email", payload.email);
-                setIsSubmitting(false);                
+                setIsSubmitting(false);
                 navigate('/resetPassword');
-            }).catch(error => {                
-                setIsSubmitting(false);                
+            }).catch(error => {
+                setIsSubmitting(false);
                 alert("Oops! Something went wrong while sending you the verification code.")
             });
         };
@@ -55,7 +55,7 @@ export default function ForgotPassword() {
 
     const authGuard = async () => {
         await checkIfLoggedIn().then(response => {
-            if (response == true) {                
+            if (response == true) {
                 navigate('/');
                 return
             }
@@ -79,7 +79,7 @@ export default function ForgotPassword() {
                 height: '100vh',
                 overflow: "hidden"
             }}>
-                <CircularProgress />                
+                <CircularProgress />
                 <Typography style={{ marginLeft: 20 }} variant="body1">Loading ...</Typography>
             </div>
         )
@@ -128,7 +128,7 @@ export default function ForgotPassword() {
                             name="email"
                             autoComplete="email"
                             autoFocus
-                        />                       
+                        />
                         <Button
                             type="submit"
                             fullWidth
@@ -141,9 +141,15 @@ export default function ForgotPassword() {
                             <Grid item xs>
                             </Grid>
                             <Grid item>
-                                <Link href="/signIn" variant="body2">
+                                <Link
+                                    component="button"
+                                    variant="body2"
+                                    onClick={() => {
+                                        navigate("/signIn")
+                                    }}
+                                >
                                     Already have an account? Sign in
-                                </Link>
+                                </Link>                                
                             </Grid>
                         </Grid>
                     </Box>
